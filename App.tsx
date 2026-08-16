@@ -106,6 +106,21 @@ function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [darkMode, setDarkMode] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // 鼠标靠近屏幕右侧时自动显示侧边栏
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (e.clientX >= window.innerWidth - 20) {
+        setSidebarOpen(true);
+      }
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+    };
+  }, []);
   
   // Search Mode State
   const [searchMode, setSearchMode] = useState<SearchMode>('internal');
@@ -2310,20 +2325,18 @@ function App() {
         onSave={handleSearchConfigModalSave}
       />
 
-      {/* Sidebar Mobile Overlay */}
-      {sidebarOpen && (
-        <div 
-          className="fixed inset-0 z-20 bg-black/50 lg:hidden backdrop-blur-sm"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
-
-      {/* Sidebar */}
-      <aside 
+     {/* Sidebar */}
+      <aside
+        onMouseEnter={() => setSidebarOpen(true)}
+        onMouseLeave={() => setSidebarOpen(false)}
         className={`
-          fixed lg:static inset-y-0 left-0 z-30 w-64 transform transition-transform duration-300 ease-in-out
-          bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 flex flex-col
-          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+          fixed inset-y-0 right-0 z-50 w-64
+          transform transition-transform duration-300 ease-out
+          bg-white dark:bg-slate-800
+          border-l border-slate-200 dark:border-slate-700
+          shadow-2xl
+          flex flex-col
+          ${sidebarOpen ? 'translate-x-0' : 'translate-x-full'}
         `}
       >
         {/* Logo */}
